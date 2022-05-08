@@ -6,6 +6,10 @@ rho_init = 1.2  # initial air density [kg/m^3]
 g = 9.81        # accel due to gravity [m/s^2]
 def rho(alt):   # air density approximation (valid for troposphere)
     return rho_init*math.e**(-alt/1040)
+vw_10 = 5       # wind velocity at 10 meters [m/s]
+vw_alpha = 0.27 # hellmann exponent
+def vw(alt):    # wind velocity at specified altitude
+    return vw_10*(max(alt,0)/10)**vw_alpha
 
 # Rocket Parameters
 m = 45.0        # rocket dry mass [kg]
@@ -51,6 +55,7 @@ y = [x_init]    # rocket altitude [m]
 v = [v_init]    # rocket velocity [m/s]
 a = [g]         # rocket acceleration [m/s^2]
 fd = [0.0]      # parachute drag force [N]
+x = [0]         # rocket horizontal position [m]
 
 # parachute opening is modeled as constant acceleration process based on a known opening time
 # drogue openness
@@ -98,6 +103,7 @@ while y[-1] > 0:
     # time step
     v.append(v[-1] + a[-1]*dt)
     y.append(y[-1] + v[-1]*dt)
+    x.append(x[-1] + vw(y[-1])*dt)
     t.append(t[-1] + dt)
 
 def annotate_max(var, unit, dec):
@@ -148,4 +154,16 @@ plt.title('Drag Force vs. Time')
 annotate_max(fd, ' N', 0)
 plt.ylabel('Drag Force (N)')
 plt.xlabel('Time (s)')
+plt.figure()
+
+plt.plot(x, y)
+plt.title('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10))
+plt.xlabel('Horizontal Position (m)')
+plt.ylabel('Altitude (m)')
+plt.figure()
+
+plt.plot([vw(x) for x in range(int(x_init))], range(int(x_init)))
+plt.title('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10))
+plt.ylabel('Altitude (m)')
+plt.xlabel('Wind Velocity (m/s)')
 plt.show()
