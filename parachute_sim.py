@@ -111,59 +111,71 @@ def annotate_max(var, unit, dec):
         if var[i-1] < var[i] and var[i] > var[i+1]:
             plt.annotate(str(round(var[i], dec)) + unit, (t[i] + 2, var[i]))
 
-plt.plot(t, y)
-plt.title('Altitude vs. Time')
-plt.ylabel('Altitude (m)')
-plt.xlabel('Time (s)')
-plt.figure()
+def plot_alt():
+    plt.plot(t, y)
+    plt.title('Altitude vs. Time')
+    plt.ylabel('Altitude (m)')
+    plt.xlabel('Time (s)')
+    plt.figure()
 
-v = [-vel for vel in v]
-plt.plot(t, v)
-plt.title('Velocity vs. Time')
-annotate_max(v, ' m/s', 0)
-plt.ylabel('Velocity (m/s)')
-plt.xlabel('Time (s)')
-plt.figure()
+def plot_vel():
+    v_neg = [-vel for vel in v]
+    plt.plot(t, v_neg)
+    plt.title('Velocity vs. Time')
+    annotate_max(v_neg, ' m/s', 0)
+    plt.ylabel('Velocity (m/s)')
+    plt.xlabel('Time (s)')
+    plt.figure()
 
-plt.plot(t[1:], a[1:])
-plt.title('Acceleration vs. Time')
-annotate_max(a, ' m/s^2', 1)
-plt.ylabel('Altitude (m)')
-plt.xlabel('Time (s)')
-plt.figure()
+def plot_accel():
+    plt.plot(t[1:], a[1:])
+    plt.title('Acceleration vs. Time')
+    annotate_max(a, ' m/s^2', 1)
+    plt.ylabel('Altitude (m)')
+    plt.xlabel('Time (s)')
+    plt.figure()
 
-#plt.plot(t, a)
-#plt.title('Acceleration vs. Time')
-#plt.ylabel('Acceleration (m/s^2)')
-#plt.xlabel('Time (s)')
-#plt.figure()
+def plot_drag_force():
+    plt.plot(t, fd)
+    plt.title('Drag Force vs. Time')
+    annotate_max(fd, ' N', 0)
+    plt.ylabel('Drag Force (N)')
+    plt.xlabel('Time (s)')
+    plt.figure()
 
-#e_kinetic = [0.5*m*vel**2 * 10E-6 for vel in v]
-#e_potential = [m*g*h * 10E-6 for h in x]
-#e_total = [k + p for k, p in zip(e_kinetic, e_potential)]
-#plt.ylabel('Energy (MJ)')
-#plt.xlabel('Time (s)')
-#plt.plot(t, e_kinetic, "-r", label="Kinetic")
-#plt.plot(t, e_potential, "-g", label="Potential")
-#plt.plot(t, e_total, "-b", label="Total")
-#plt.legend(loc="upper right")
-#plt.figure()
+def plot_energy():
+    e_kinetic = [0.5*m*vel**2 * 10E-6 for vel in v]
+    e_potential = [m*g*h * 10E-6 for h in x]
+    e_total = [k + p for k, p in zip(e_kinetic, e_potential)]
+    plt.ylabel('Energy (MJ)')
+    plt.xlabel('Time (s)')
+    plt.plot(t, e_kinetic, "-r", label="Kinetic")
+    plt.plot(t, e_potential, "-g", label="Potential")
+    plt.plot(t, e_total, "-b", label="Total")
+    plt.legend(loc="upper right")
+    plt.figure()
 
-plt.plot(t, fd)
-plt.title('Drag Force vs. Time')
-annotate_max(fd, ' N', 0)
-plt.ylabel('Drag Force (N)')
-plt.xlabel('Time (s)')
-plt.figure()
+def plot_drift():
+    plt.plot(x, y)
+    plt.title('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10))
+    plt.xlabel('Horizontal Position (m)')
+    plt.ylabel('Altitude (m)')
+    plt.figure()
 
-plt.plot(x, y)
-plt.title('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10))
-plt.xlabel('Horizontal Position (m)')
-plt.ylabel('Altitude (m)')
-plt.figure()
+def plot_wind_profile():
+    plt.plot([vw(x) for x in range(int(x_init))], range(int(x_init)))
+    plt.title('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10))
+    plt.ylabel('Altitude (m)')
+    plt.xlabel('Wind Velocity (m/s)')
+    plt.figure()
 
-plt.plot([vw(x) for x in range(int(x_init))], range(int(x_init)))
-plt.title('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10))
-plt.ylabel('Altitude (m)')
-plt.xlabel('Wind Velocity (m/s)')
+#plot_alt()
+#plot_vel()
+#plot_accel()
+#plot_drag_force()
+#plot_energy()
+plot_wind_profile()
+plot_drift()
+
+plt.close()
 plt.show()
