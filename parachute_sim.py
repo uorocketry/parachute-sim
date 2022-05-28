@@ -14,13 +14,13 @@ def vw(alt):    # wind velocity at specified altitude
 # Rocket Parameters
 m = 45.0        # rocket dry mass [kg]
 v_init = 0.0    # initial velocity [m/s]
-x_init = 8748.0 # initial altitude [m]
+x_init = 7900.0 # initial altitude [m]
 
 # Drogue Parameters
 td_d = 0        # deploy at apogee (time zero)
 #xd_d = 8748.0  # deploy at apogee (initial altitude)
 vt_d = -40.0    # target velocity [m/s]
-cd_d = 1.1      # drag coefficient
+cd_d = 1.0      # drag coefficient
 ot_d = 0.2      # opening time [s] (empirical value from testing)
 # calculated area [m^2]
 # size chute for target velocity at specified altitude rho(alt)
@@ -30,7 +30,7 @@ print('drogue diameter: ', round(2*math.sqrt(a_d/math.pi), 2), 'm', sep='')
 # Full Main (full) Parameters
 xd_f = 400.0    # deploy altitude [m]
 vt_f = -7.0     # target velocity [m/s]
-cd_f = 0.8      # drag coefficient
+cd_f = 0.95      # drag coefficient
 ot_f = 0.2      # opening time (reefed to full) [s]
 # calculated area [m^2]
 a_f = (2*g*m)/(rho(0)*cd_f*vt_f**2)
@@ -40,13 +40,12 @@ print('full-main diameter: ', round(2*math.sqrt(a_f/math.pi), 2), 'm', sep='')
 a_r = a_f       # same a full main [m^2]
 xd_r = 800.0    # deploy altitude [m]
 vt_r = -18.0    # target velocity [m/s]
-#cd_r = 0.1     # drag coefficient
 ot_r = 0.2      # opening time [s]
-# calculated area [m^2]
-#a_r = (2*g*m)/(rho(450)*cd_r*vt_r**2)
-#print('partial-main diameter: ', round(2*math.sqrt(a_r/math.pi), 2), 'm', sep='')
-cd_r = (2*g*m)/(rho(450)*a_r*vt_r**2)
-print('partial-main Cd: ', round(cd_r, 2), 'm', sep='')
+# Run simulation with drag coefficient determined from testing
+cd_r = 0.3
+# Or determine target reefed Cd based on target partial main velocity
+#cd_r = (2*g*m)/(rho(450)*a_r*vt_r**2)
+#print('partial-main Cd: ', round(cd_r, 2), sep='')
 
 # Simulation
 dt = 0.001      # time step [s]
@@ -169,13 +168,13 @@ def plot_wind_profile():
     plt.xlabel('Wind Velocity (m/s)')
     plt.figure()
 
-#plot_alt()
-#plot_vel()
-#plot_accel()
-#plot_drag_force()
+plot_alt()
+plot_vel()
+plot_accel()
+plot_drag_force()
 #plot_energy()
-plot_wind_profile()
-plot_drift()
+#plot_wind_profile()
+#plot_drift()
 
 plt.close()
 plt.show()
