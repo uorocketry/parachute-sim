@@ -89,17 +89,14 @@ while y > 0:
     sim.plot('Velocity vs. Time', t, -v, 'Time', 's', 'Velocity', 'm/s', annotate_max = 0)
     sim.plot('Acceleration vs. Time', t, a, 'Time', 's', 'Acceleration', 'm/s^2', annotate_max = 1)
     sim.plot('Drag Force vs. Time', t, fd, 'Time', 's', 'Drag Force', 'N', annotate_max = 0)
+    sim.plot('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
 
     e_kinetic = 0.5*m*(-v)**2 * 10E-6
     e_potential = m*g*y * 10E-6
     e_total = e_kinetic + e_potential
-
-#    plt.plot(t, e_kinetic, "-r", label="Kinetic")
-#    plt.plot(t, e_potential, "-g", label="Potential")
-#    plt.plot(t, e_total, "-b", label="Total")
-
-    #sim.plot('Altitude vs. Time', t, y, 'Altitude (m)', 'Time (s)')
-    sim.plot('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
+    sim.plot('Energy vs. Time', t, e_kinetic, 'Time', 's', 'Energy', 'MJ', series='Kinetic', color='-r')
+    sim.plot('Energy vs. Time', t, e_potential, series='Potential', color='-g')
+    sim.plot('Energy vs. Time', t, e_total, series='Total', color='-b')
 
 for y in range(int(y_init)):
     sim.plot('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10), wind_velocity(y), y, 'Wind Velocity', 'm/s', 'Altitude', 'm')
