@@ -100,6 +100,8 @@ while y > 0:
 
     #sim.plot('Altitude vs. Time', t, y, 'Altitude (m)', 'Time (s)')
     sim.plot('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
-    #sim.plot('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10), [wind_velocity(x) for x in range(int(y_init))], range(int(y_init)), 'Altitude (m)', 'Wind Velocity (m/s)')
+
+for y in range(int(y_init)):
+    sim.plot('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10), wind_velocity(y), y, 'Wind Velocity', 'm/s', 'Altitude', 'm')
 
 sim.draw_plots()
