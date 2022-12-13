@@ -85,19 +85,10 @@ while y > 0:
     x += sim.integrate(vx, 'vx', dt)
     t += dt
 
-#def annotate_max(var, unit, dec):
-#    for i in range(1, len(t) - 1): # find and annotate local maxima
-#        if var[i-1] < var[i] and var[i] > var[i+1]:
-#            plt.annotate(str(round(var[i], dec)) + unit, (t[i] + 2, var[i]))
-#
-#    annotate_max(v_neg, ' m/s', 0)
-#    annotate_max(a, ' m/s^2', 1)
-#    annotate_max(fd, ' N', 0)
-
-    sim.plot('Altitude vs. Time', t, y, 'Time (s)', 'Altitude (m)')
-    sim.plot('Velocity vs. Time', t, -v, 'Time (s)', 'Velocity (m/s)')
-    sim.plot('Acceleration vs. Time', t, a, 'Time (s)', 'Acceleration (m/s^2)')
-    sim.plot('Drag Force vs. Time', t, fd, 'Time (s)', 'Drag Force (N)')
+    sim.plot('Altitude vs. Time', t, y, 'Time', 's', 'Altitude', 'm')
+    sim.plot('Velocity vs. Time', t, -v, 'Time', 's', 'Velocity', 'm/s', annotate_max = 0)
+    sim.plot('Acceleration vs. Time', t, a, 'Time', 's', 'Acceleration', 'm/s^2', annotate_max = 1)
+    sim.plot('Drag Force vs. Time', t, fd, 'Time', 's', 'Drag Force', 'N', annotate_max = 0)
 
     e_kinetic = 0.5*m*(-v)**2 * 10E-6
     e_potential = m*g*y * 10E-6
@@ -108,7 +99,7 @@ while y > 0:
 #    plt.plot(t, e_total, "-b", label="Total")
 
     #sim.plot('Altitude vs. Time', t, y, 'Altitude (m)', 'Time (s)')
-    sim.plot('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position (m)', 'Altitude (m)')
+    sim.plot('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
     #sim.plot('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10), [wind_velocity(x) for x in range(int(y_init))], range(int(y_init)), 'Altitude (m)', 'Wind Velocity (m/s)')
 
 sim.draw_plots()
