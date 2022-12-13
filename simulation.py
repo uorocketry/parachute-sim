@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from math import log10, floor
 
 state_vec = {}
 plot_vec = {}
@@ -29,7 +30,7 @@ class PlotData:
         self.data[series].append(x, y)
 
 def plot(title: str, x: float, y: float, xlabel: str = '', xunits: str = '', ylabel: str = '', yunits: str = '', 
-        annotate_max: int = -1, series: str = '', color = ''):
+        annotate_max: int = -1, series: str = '', color = 'k'):
     if title not in plot_vec:
         plot_vec[title] = PlotData(title, xlabel, xunits, ylabel, yunits, annotate_max)
     plot_vec[title].append(x, y, series, color)
@@ -72,6 +73,31 @@ def plot_series(series: PlotData.Series):
     else:
         plt.plot(series.xs, series.ys, label=series.name, linewidth=0.75)
 
+def scale_axis(max: float):
+    magnitude = 10**floor(log10(max))
+    dig = max//magnitude
+    err = max%(dig*magnitude)
+    if dig > 3 or err/magnitude > 0.5:
+        # ex. 7432 -> 8000
+        return magnitude*(dig+1)
+    else:
+        # ex. 2432 -> 2500
+        return magnitude*(dig+0.5)
+
+def scale_plots(plot: PlotData):
+    x_lims = [0.0, 0.0]
+    y_lims = [0.0, 0.0]
+    for series in plot.data.values():
+        x_lims[0] = min(x_lims[0], min(series.xs))
+        x_lims[1] = max(x_lims[1], max(series.xs))
+        y_lims[0] = min(y_lims[0], min(series.ys))
+        y_lims[1] = max(y_lims[1], max(series.ys))
+
+    y_lims[1] = scale_axis(y_lims[1])
+
+    plt.xlim(x_lims)
+    plt.ylim(y_lims)
+
 def draw_plots():
     for plot in plot_vec.values():
         plt.title(plot.title)
@@ -87,6 +113,8 @@ def draw_plots():
 
         if len(plot.data) > 1:
             plt.legend(loc="upper right")
+        
+        scale_plots(plot)
         plt.figure()
 
     plt.close()
