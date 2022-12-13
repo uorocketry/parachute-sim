@@ -8,13 +8,13 @@ def rho(alt):   # air density approximation (valid for troposphere)
     return rho_init*math.e**(-alt/1040)
 vw_10 = 5       # wind velocity at 10 meters [m/s]
 vw_alpha = 0.27 # hellmann exponent
-def vw(alt):    # wind velocity at specified altitude
+def wind_velocity(alt):    # wind velocity at specified altitude
     return vw_10*(max(alt,0)/10)**vw_alpha
 
 # Rocket Parameters
 m = 28.0        # rocket dry mass [kg]
 v_init = 0.0    # initial velocity [m/s]
-x_init = 7620.0 # initial altitude [m]
+y_init = 7620.0 # initial altitude [m]
 
 # Drogue Parameters
 td_d = 0        # deploy at apogee (time zero)
@@ -39,11 +39,13 @@ print('full-main diameter: ', round(2*math.sqrt(a_f/math.pi), 2), 'm', sep='')
 # Simulation
 dt = 0.001      # time step [s]
 t = [0.0]       # simulation time [s] (time from apogee)
-y = [x_init]    # rocket altitude [m]
+y = [y_init]    # rocket altitude [m]
 v = [v_init]    # rocket velocity [m/s]
 a = [g]         # rocket acceleration [m/s^2]
 fd = [0.0]      # parachute drag force [N]
 x = [0]         # rocket horizontal position [m]
+# rocket horizontal velocity [m/s]
+vx = [wind_velocity(y_init)]
 
 # parachute opening is modeled as constant acceleration process based on a known opening time
 # drogue openness
@@ -54,6 +56,22 @@ oa_d = 1.0/(ot_d**2) if ot_d > 0 else -1
 o_f = 0.0
 ov_f = 0.0
 oa_f = 1.0/(ot_f**2) if ot_f > 0 else -1
+
+def integrate(f, dt):
+    if (len(f) >= 3):   # quadratic
+        return (dt/12)*(5*f[-1] +8*f[-2] -f[-3])
+    elif (len(f) >= 2): # linear
+        return (dt/2)*(f[-1] + f[-2])
+    else:               # rectangular
+        return dt*f[-1]
+
+def derive(f, dt):
+    if (len(f) >= 3):   # quadratic
+        return (1/(2*dt))*(3*f[-1] -4*f[-2] +f[-3])
+    elif (len(f) >= 2): # linear
+        return (1/dt)*(f[-1] -f[-2])
+    else:               # not defined
+        return 0.0
 
 while y[-1] > 0:
     if t[-1] > td_d: # drogue openness (opens near apogee and remains open)
@@ -75,9 +93,10 @@ while y[-1] > 0:
     a.append((fd[-1] - m*g)/m) # acceleration
 
     # time step
-    v.append(v[-1] + a[-1]*dt)
-    y.append(y[-1] + v[-1]*dt)
-    x.append(x[-1] + vw(y[-1])*dt)
+    vx.append(wind_velocity(y[-1]))
+    v.append(v[-1] + integrate(a, dt))
+    y.append(y[-1] + integrate(v, dt))
+    x.append(x[-1] + integrate(vx, dt))
     t.append(t[-1] + dt)
 
 def annotate_max(var, unit, dec):
@@ -137,7 +156,7 @@ def plot_drift():
     plt.figure()
 
 def plot_wind_profile():
-    plt.plot([vw(x) for x in range(int(x_init))], range(int(x_init)))
+    plt.plot([wind_velocity(x) for x in range(int(y_init))], range(int(y_init)))
     plt.title('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10))
     plt.ylabel('Altitude (m)')
     plt.xlabel('Wind Velocity (m/s)')
