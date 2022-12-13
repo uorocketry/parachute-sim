@@ -49,13 +49,13 @@ vx = [wind_velocity(y_init)]
 
 # parachute opening is modeled as constant acceleration process based on a known opening time
 # drogue openness
-o_d = 0.0
-ov_d = 0.0
-oa_d = 1.0/(ot_d**2) if ot_d > 0 else -1
+o_d = [0.0]
+ov_d = [0.0]
+oa_d = [1.0/(ot_d**2) if ot_d > 0 else -1]
 # full openness
-o_f = 0.0
-ov_f = 0.0
-oa_f = 1.0/(ot_f**2) if ot_f > 0 else -1
+o_f = [0.0]
+ov_f = [0.0]
+oa_f = [1.0/(ot_f**2) if ot_f > 0 else -1]
 
 def integrate(f, dt):
     if (len(f) >= 3):   # quadratic
@@ -75,20 +75,20 @@ def derive(f, dt):
 
 while y[-1] > 0:
     if t[-1] > td_d: # drogue openness (opens near apogee and remains open)
-        if o_d < 1.0 and oa_d > 0:
-            ov_d += oa_d * dt
-            o_d += ov_d * dt
+        if o_d[-1] < 1.0 and oa_d[-1] > 0:
+            ov_d.append(ov_d[-1] + integrate(oa_d, dt))
+            o_d.append(o_d[-1] + integrate(ov_d, dt))
         else:
-            o_d = 1.0
+            o_d[-1] = 1.0
 
     if y[-1] < xd_f: # full main openness
-        if o_f < 1.0 and oa_f > 0:
-            ov_f += oa_f * dt
-            o_f += ov_f * dt
+        if o_f[-1] < 1.0 and oa_f[-1] > 0:
+            ov_f.append(ov_f[-1] + integrate(oa_f, dt))
+            o_f.append(o_f[-1] + integrate(ov_f, dt))
         else:
-            o_f = 1.0
+            o_f[-1] = 1.0
 
-    drag_const = cd_d*a_d*o_d + cd_f*a_f*o_f
+    drag_const = cd_d*a_d*o_d[-1] + cd_f*a_f*o_f[-1]
     fd.append(0.5*rho(y[-1])*drag_const*v[-1]**2) # parachute force
     a.append((fd[-1] - m*g)/m) # acceleration
 
