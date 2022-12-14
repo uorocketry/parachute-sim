@@ -39,8 +39,8 @@ a_f = (2*g*m)/(rho(0)*cd_f*vt_f**2)
 print('full-main diameter: ', round(2*math.sqrt(a_f/math.pi), 2), 'm', sep='')
 
 # Simulation
-dt = 0.001      # time step [s]
-t = 0.0       # simulation time [s] (time from apogee)
+#dt = 0.001      # time step [s]
+#t = 0.0       # simulation time [s] (time from apogee)
 y = y_init    # rocket altitude [m]
 v = v_init    # rocket velocity [m/s]
 a = g         # rocket acceleration [m/s^2]
@@ -60,17 +60,17 @@ ov_f = 0.0
 oa_f = 1.0/(ot_f**2) if ot_f > 0 else -1
 
 while y > 0:
-    if t > td_d: # drogue openness (opens near apogee and remains open)
+    if sim.t > td_d: # drogue openness (opens near apogee and remains open)
         if o_d < 1.0 and oa_d > 0:
-            ov_d = ov_d + sim.integrate(oa_d, 'oa_d', dt)
-            o_d = o_d + sim.integrate(ov_d, 'ov_d', dt)
+            ov_d += sim.integrate(oa_d, 'oa_d')
+            o_d += sim.integrate(ov_d, 'ov_d')
         else:
             o_d = 1.0
 
     if y < xd_f: # full main openness
         if o_f < 1.0 and oa_f > 0:
-            ov_f = ov_f + sim.integrate(oa_f, 'oa_f', dt)
-            o_f = o_f + sim.integrate(ov_f, 'ov_f', dt)
+            ov_f += sim.integrate(oa_f, 'oa_f')
+            o_f += sim.integrate(ov_f, 'ov_f')
         else:
             o_f = 1.0
 
@@ -80,24 +80,26 @@ while y > 0:
 
     # time step
     vx = wind_velocity(y)
-    v += sim.integrate(a, 'a', dt)
-    y += sim.integrate(v, 'v', dt)
-    x += sim.integrate(vx, 'vx', dt)
-    t += dt
+    v += sim.integrate(a, 'a')
+    y += sim.integrate(v, 'v')
+    x += sim.integrate(vx, 'vx')
+    sim.t += sim.dt
 
-    sim.plot('Altitude vs. Time', t, y, 'Time', 's', 'Altitude', 'm')
-    sim.plot('Velocity vs. Time', t, -v, 'Time', 's', 'Velocity', 'm/s', annotate_max = 0)
-    sim.plot('Acceleration vs. Time', t, a, 'Time', 's', 'Acceleration', 'm/s^2', annotate_max = 1)
-    sim.plot('Drag Force vs. Time', t, fd, 'Time', 's', 'Drag Force', 'N', annotate_max = 0)
-    sim.plot('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
+    # plot
+    sim.plot(y, 'Altitude', 'm')
+    sim.plot(-v, 'Velocity', 'm/s', annotate_max = 0)
+    sim.plot(a, 'Acceleration', 'm/s^2', annotate_max = 1)
+    sim.plot(fd, 'Drag Force', 'N', annotate_max = 0)
 
     e_kinetic = 0.5*m*(-v)**2/1000
     e_potential = m*g*y/1000
-    sim.plot('Energy vs. Time', t, e_kinetic, 'Time', 's', 'Energy', 'kJ', series='Kinetic', color='-r')
-    sim.plot('Energy vs. Time', t, e_potential, series='Potential', color='-g')
-    sim.plot('Energy vs. Time', t, e_kinetic + e_potential, series='Total', color='-b')
+    sim.plot(e_kinetic, 'Energy', 'kJ', series='Kinetic', color='-r')
+    sim.plot(e_potential, 'Energy', 'kJ', series='Potential', color='-g')
+    sim.plot(e_kinetic + e_potential, 'Energy', 'kJ', series='Total', color='-b')
+
+    sim.plotxy('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
 
 for y in range(int(y_init)):
-    sim.plot('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10), wind_velocity(y), y, 'Wind Velocity', 'm/s', 'Altitude', 'm')
+    sim.plotxy('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10), wind_velocity(y), y, 'Wind Velocity', 'm/s', 'Altitude', 'm')
 
 sim.draw_plots()
