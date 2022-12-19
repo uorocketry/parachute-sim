@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from math import log10, floor, sqrt, copysign
+from math import log10, floor, sqrt
 
 t = 0.0
 TIMESTEP = 0.001
@@ -124,9 +124,9 @@ def _perp_dist(xs: list[float], ys: list[float]):
             dmax = d
     return imax, dmax
 
-def _douglas_peucker(xs_in: list[float], ys_in: list[float], epsilon: float):
-    xs_stack = [xs_in]
-    ys_stack = [ys_in]
+def _decimate_douglas_peucker(data: PlotData.Series, epsilon: float):
+    xs_stack = [data.xs]
+    ys_stack = [data.ys]
     xs_out = []
     ys_out = []
 
@@ -143,12 +143,16 @@ def _douglas_peucker(xs_in: list[float], ys_in: list[float], epsilon: float):
             xs_out.append(xs[0])
             ys_out.append(ys[0])
 
-    xs_out.append(xs_in[-1])
-    ys_out.append(ys_in[-1])
-    return xs_out, ys_out
+    xs_out.append(data.xs[-1])
+    ys_out.append(data.ys[-1])
+    data.xs = xs_out
+    data.ys = ys_out
 
-def _preserve_maxima(xs: list[float], ys: list[float], resolution: float):
-    e_x = (max(xs)-min(xs))/resolution
+def _decimate_preserve_maxima(data: PlotData.Series, resolution: float):
+    xs = data.xs
+    ys = data.ys
+
+    e_x = (max(data.xs)-min(xs))/resolution
     e_y = (max(ys)-min(ys))/resolution
 
     xs_out = [xs[0], xs[1]]
@@ -170,15 +174,8 @@ def _preserve_maxima(xs: list[float], ys: list[float], resolution: float):
 
     xs_out.append(xs[-1])
     ys_out.append(ys[-1])
-    return xs_out, ys_out
-
-def _decimate(data: PlotData.Series):
-    #delta = min(max(data.ys)-min(data.ys), max(data.xs)-min(data.xs))
-    #epsilon = delta/100000
-    old_len = len(data.xs)
-    #data.xs, data.ys = _douglas_peucker(data.xs, data.ys, epsilon)
-    data.xs, data.ys = _preserve_maxima(data.xs, data.ys, 1000)
-    print('old:{}, new:{}, ({}%)'.format(old_len, len(data.xs), round(100*len(data.xs)/old_len, 4)))
+    data.xs = xs_out
+    data.ys = ys_out
 
 def draw_plots():
     for plot in _plot_vec.values():
@@ -186,14 +183,16 @@ def draw_plots():
         plt.gcf().canvas.manager.set_window_title(plot.title)
 
         for series in plot.data.values():
-            _decimate(series)
-
-        if plot.annotate_max >= 0:
-            for series in plot.data.values():
-                _an_max(series, plot)
+            #old_len = len(series.xs)
+            _decimate_preserve_maxima(series, 1000)
+            #delta = min(max(series.ys)-min(series.ys), max(series.xs)-min(series.xs))
+            #_decimate_douglas_peucker(series, delta/100000)
+            #print('old:{}, new:{}, ({}%)'.format(old_len, len(series.xs), round(100*len(series.xs)/old_len, 4)))
 
         for series in plot.data.values():
             _plot_series(series)
+            if plot.annotate_max >= 0:
+                _an_max(series, plot)
 
         if plot.xlabel != '' or plot.xunits != '':
             plt.xlabel('{} ({})'.format(plot.xlabel, plot.xunits))
