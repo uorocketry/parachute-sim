@@ -111,13 +111,13 @@ def _scale_plots(plot: PlotData):
 def _perp_dist(xs: list[float], ys: list[float]):
     dmax = 0
     imax = 0
+    x1 = xs[0]
+    x2 = xs[-1]
+    y1 = ys[0]
+    y2 = ys[-1]
+    dx = x2-x1
+    dy = y2-y1
     for i in range(2, len(xs)):
-        x1 = xs[0]
-        x2 = xs[-1]
-        y1 = ys[0]
-        y2 = ys[-1]
-        dx = x2-x1
-        dy = y2-y1
         d = abs((y1-ys[i])*dx - (x1-xs[i])*dy) / sqrt(dx**2 + dy**2)
         if (d > dmax):
             imax = i
@@ -153,7 +153,6 @@ def _decimate(data: PlotData.Series):
     old_len = len(data.xs)
     data.xs, data.ys = _douglas_peucker(data.xs, data.ys, epsilon)
     print('old:{}, new:{}, ({}%)'.format(old_len, len(data.xs), round(100*len(data.xs)/old_len, 4)))
-
 
 def draw_plots():
     for plot in _plot_vec.values():
