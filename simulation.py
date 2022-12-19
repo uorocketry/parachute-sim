@@ -108,7 +108,7 @@ def _scale_plots(plot: PlotData):
     plt.xlim(x_lims)
     plt.ylim(y_lims)
 
-def _douglas_peucker(xs: list[float], ys: list[float], epsilon: float):
+def _perp_dist(xs: list[float], ys: list[float]):
     dmax = 0
     imax = 0
     for i in range(2, len(xs)):
@@ -122,13 +122,30 @@ def _douglas_peucker(xs: list[float], ys: list[float], epsilon: float):
         if (d > dmax):
             imax = i
             dmax = d
+    return imax, dmax
 
-    if (dmax > epsilon):
-        xs_1, ys_1 = _douglas_peucker(xs[:imax], ys[:imax], epsilon)
-        xs_2, ys_2 = _douglas_peucker(xs[imax:], ys[imax:], epsilon)
-        return ((xs_1+xs_2), (ys_1+ys_2))
-    else:
-        return ([xs[0], xs[-1]], [ys[0], ys[-1]])
+def _douglas_peucker(xs_in: list[float], ys_in: list[float], epsilon: float):
+    xs_stack = [xs_in]
+    ys_stack = [ys_in]
+    xs_out = []
+    ys_out = []
+
+    while len(xs_stack) > 0:
+        xs = xs_stack.pop()
+        ys = ys_stack.pop()
+        imax, dmax = _perp_dist(xs, ys)
+        if (dmax > epsilon):
+            xs_stack.append(xs[imax:])
+            ys_stack.append(ys[imax:])
+            xs_stack.append(xs[:imax])
+            ys_stack.append(ys[:imax])
+        else:
+            xs_out.append(xs[0])
+            ys_out.append(ys[0])
+
+    xs_out.append(xs_in[-1])
+    ys_out.append(ys_in[-1])
+    return xs_out, ys_out
 
 def _decimate(data: PlotData.Series):
     delta = max(max(data.ys)-min(data.xs), max(data.xs)-min(data.xs))
