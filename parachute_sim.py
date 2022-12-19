@@ -1,5 +1,4 @@
 import math
-import time
 import matplotlib.pyplot as plt
 import simulation as sim
 
@@ -39,8 +38,6 @@ a_f = (2*g*m)/(rho(0)*cd_f*vt_f**2)
 print('full-main diameter: ', round(2*math.sqrt(a_f/math.pi), 2), 'm', sep='')
 
 # Simulation
-#dt = 0.001      # time step [s]
-#t = 0.0       # simulation time [s] (time from apogee)
 y = y_init    # rocket altitude [m]
 v = v_init    # rocket velocity [m/s]
 a = g         # rocket acceleration [m/s^2]
@@ -83,7 +80,6 @@ while y > 0:
     v += sim.integrate(a, 'a')
     y += sim.integrate(v, 'v')
     x += sim.integrate(vx, 'vx')
-    sim.t += sim.dt
 
     # plot
     sim.plot(y, 'Altitude', 'm')
@@ -98,6 +94,8 @@ while y > 0:
     sim.plot(e_kinetic + e_potential, 'Energy', 'kJ', series='Total', color='-b')
 
     sim.plotxy('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
+
+    sim.step()
 
 for y in range(int(y_init)):
     sim.plotxy('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10), wind_velocity(y), y, 'Wind Velocity', 'm/s', 'Altitude', 'm')

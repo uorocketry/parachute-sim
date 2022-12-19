@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 from math import log10, floor
 
 t = 0.0
-dt = 0.001
+TIMESTEP = 0.001
+
 _state_vec = {}
 _plot_vec = {}
 
@@ -31,6 +32,10 @@ class PlotData:
             self.data[series] = PlotData.Series(series, color)
         self.data[series].append(x, y)
 
+def step():
+    global t
+    t += TIMESTEP
+
 def plot(y: float, name: str, yunits: str = '', annotate_max: int = -1, series: str = '', color = 'k'):
     plotxy('{} vs. Time'.format(name), t, y, 'Time', 's', name, yunits, annotate_max, series, color)
 
@@ -52,18 +57,18 @@ def _update_state(f: float, idf: str) -> list[float]:
 def integrate(f: float, idf: str) -> float:
     state = _update_state(f, idf)
     if (state[0] != None):
-        return (dt/12)*(5*state[-1] +8*state[-2] -state[-3])
+        return (TIMESTEP/12)*(5*state[-1] +8*state[-2] -state[-3])
     elif (state[1] != None):
-        return (dt/2)*(state[-1] + state[-2])
+        return (TIMESTEP/2)*(state[-1] + state[-2])
     else:
-        return dt*state[-1]
+        return TIMESTEP*state[-1]
 
 def derive(f: float, idf: str) -> float:
     state = _update_state(f, idf)
     if (state[0] != None):
-        return (1/(2*dt))*(3*state[-1] -4*state[-2] +state[-3])
+        return (1/(2*TIMESTEP))*(3*state[-1] -4*state[-2] +state[-3])
     elif (state[1] != None):
-        return (1/dt)*(state[-1] -state[-2])
+        return (1/TIMESTEP)*(state[-1] -state[-2])
     else:
         return 0.0
 
