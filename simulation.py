@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from math import log10, floor, sqrt
+from math import log10, floor, sqrt, copysign
 
 t = 0.0
 TIMESTEP = 0.001
@@ -147,11 +147,37 @@ def _douglas_peucker(xs_in: list[float], ys_in: list[float], epsilon: float):
     ys_out.append(ys_in[-1])
     return xs_out, ys_out
 
+def _preserve_maxima(xs: list[float], ys: list[float], resolution: float):
+    e_x = (max(xs)-min(xs))/resolution
+    e_y = (max(ys)-min(ys))/resolution
+
+    xs_out = [xs[0], xs[1]]
+    ys_out = [ys[0], ys[1]]
+    sign_x = xs[0] < xs[1]
+    sign_y = ys[0] < ys[1]
+
+    for i in range(1, len(xs)-1):
+        dx = xs[i]-xs_out[-1]
+        dy = ys[i]-ys_out[-1]
+        if (abs(dx) > e_x and abs(dy) > e_y or 
+                sign_y != (ys[i] < ys[i+1]) or
+                sign_x != (xs[i] < xs[i+1])):
+            # x and y length greater than threshold or local x/y max/min
+            sign_x = dx > 0
+            sign_y = dy > 0
+            xs_out.append(xs[i])
+            ys_out.append(ys[i])
+
+    xs_out.append(xs[-1])
+    ys_out.append(ys[-1])
+    return xs_out, ys_out
+
 def _decimate(data: PlotData.Series):
-    delta = max(max(data.ys)-min(data.xs), max(data.xs)-min(data.xs))
-    epsilon = delta/100000
+    #delta = min(max(data.ys)-min(data.ys), max(data.xs)-min(data.xs))
+    #epsilon = delta/100000
     old_len = len(data.xs)
-    data.xs, data.ys = _douglas_peucker(data.xs, data.ys, epsilon)
+    #data.xs, data.ys = _douglas_peucker(data.xs, data.ys, epsilon)
+    data.xs, data.ys = _preserve_maxima(data.xs, data.ys, 1000)
     print('old:{}, new:{}, ({}%)'.format(old_len, len(data.xs), round(100*len(data.xs)/old_len, 4)))
 
 def draw_plots():
@@ -159,12 +185,12 @@ def draw_plots():
         plt.title(plot.title)
         plt.gcf().canvas.manager.set_window_title(plot.title)
 
+        for series in plot.data.values():
+            _decimate(series)
+
         if plot.annotate_max >= 0:
             for series in plot.data.values():
                 _an_max(series, plot)
-
-        for series in plot.data.values():
-            _decimate(series)
 
         for series in plot.data.values():
             _plot_series(series)
