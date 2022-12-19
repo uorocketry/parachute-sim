@@ -179,15 +179,16 @@ def _decimate_preserve_maxima(data: PlotData.Series, resolution: float):
 
 def draw_plots():
     for plot in _plot_vec.values():
-        plt.title(plot.title)
-        plt.gcf().canvas.manager.set_window_title(plot.title)
-
         for series in plot.data.values():
-            #old_len = len(series.xs)
+            old_len = len(series.xs)
             _decimate_preserve_maxima(series, 1000)
             #delta = min(max(series.ys)-min(series.ys), max(series.xs)-min(series.xs))
             #_decimate_douglas_peucker(series, delta/100000)
-            #print('old:{}, new:{}, ({}%)'.format(old_len, len(series.xs), round(100*len(series.xs)/old_len, 4)))
+            print('old:{}, new:{}, ({}%)'.format(old_len, len(series.xs), round(100*len(series.xs)/old_len, 4)))
+
+    for plot in _plot_vec.values():
+        plt.title(plot.title)
+        plt.gcf().canvas.manager.set_window_title(plot.title)
 
         for series in plot.data.values():
             _plot_series(series)
