@@ -63,7 +63,7 @@ def integrate(f: float, idf: str) -> float:
     else:
         return TIMESTEP*state[-1]
 
-def derive(f: float, idf: str) -> float:
+def differentiate(f: float, idf: str) -> float:
     state = _update_state(f, idf)
     if (state[0] != None):
         return (1/(2*TIMESTEP))*(3*state[-1] -4*state[-2] +state[-3])

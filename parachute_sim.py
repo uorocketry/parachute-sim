@@ -6,7 +6,7 @@ import simulation as sim
 rho_init = 1.2  # initial air density [kg/m^3]
 g = 9.81        # accel due to gravity [m/s^2]
 def rho(alt):   # air density approximation (valid for troposphere)
-    return rho_init*math.e**(-alt/1040)
+    return rho_init*math.e**(-alt/10400)
 vw_10 = 5       # wind velocity at 10 meters [m/s]
 vw_alpha = 0.27 # hellmann exponent
 def wind_velocity(alt):    # wind velocity at specified altitude
@@ -22,14 +22,14 @@ td_d = 0        # deploy at apogee (time zero)
 #xd_d = 8748.0  # or deploy at altitude
 vt_d = -40.0    # target velocity [m/s]
 cd_d = 1.0      # drag coefficient
-ot_d = 0.0      # opening time [s] (empirical value from testing)
+ot_d = 0.2      # opening time [s] (empirical value from testing)
 # calculated area [m^2]
 # size chute for target velocity at specified altitude rho(alt)
 a_d = (2*g*m)/(rho(1000)*cd_d*vt_d**2)
 print('drogue diameter: ', round(2*math.sqrt(a_d/math.pi), 2), 'm', sep='')
 
 # Full Main (full) Parameters
-xd_f = 350.0    # deploy altitude [m]
+xd_f = 450.0    # deploy altitude [m]
 vt_f = -7.0     # target velocity [m/s]
 cd_f = 0.92     # drag coefficient
 ot_f = 0.2      # opening time (reefed to full) [s]
@@ -84,7 +84,7 @@ while y > 0:
     # plot
     sim.plot(y, 'Altitude', 'm')
     sim.plot(-v, 'Velocity', 'm/s', annotate_max = 0)
-    sim.plot(a, 'Acceleration', 'm/s^2', annotate_max = 1)
+    sim.plot(a, 'Acceleration', 'm/s$^2$', annotate_max = 1)
     sim.plot(fd, 'Drag Force', 'N', annotate_max = 0)
 
     e_kinetic = 0.5*m*(-v)**2/1000
@@ -93,11 +93,11 @@ while y > 0:
     sim.plot(e_potential, 'Energy', 'kJ', series='Potential', color='-g')
     sim.plot(e_kinetic + e_potential, 'Energy', 'kJ', series='Total', color='-b')
 
-    sim.plotxy('Altitude vs. Horizontal Position ({}m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
+    sim.plotxy('Altitude vs. Horizontal Position ({} m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
 
     sim.step()
 
 for y in range(int(y_init)):
-    sim.plotxy('Wind Profile ({}m/s Base Wind Velocity)'.format(vw_10), wind_velocity(y), y, 'Wind Velocity', 'm/s', 'Altitude', 'm')
+    sim.plotxy('Wind Profile ({} m/s Base Wind Velocity)'.format(vw_10), wind_velocity(y), y, 'Wind Velocity', 'm/s', 'Altitude', 'm')
 
 sim.draw_plots()
