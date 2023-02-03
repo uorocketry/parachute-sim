@@ -13,7 +13,7 @@ def wind_velocity(alt):    # wind velocity at specified altitude
     return vw_10*(max(alt,0)/10)**vw_alpha
 
 # Rocket Parameters
-m = 28.0        # dry mass [kg]
+m = 25.2        # dry mass [kg]
 y_init = 7620.0 # expected apogee [m]
 vx_init = 140.0 # horizontal velocity at apogee [m/s]
 
@@ -29,7 +29,7 @@ print('drogue diameter: ', round(2*math.sqrt(a_d/math.pi), 2), 'm', sep='')
 
 # Full Main (full) Parameters
 xd_f = 450.0    # deploy altitude [m]
-vt_f = -7.0     # target velocity [m/s]
+vt_f = -6.0     # target velocity [m/s]
 cd_f = 1.0      # drag coefficient
 ot_f = 0.2      # opening time (reefed to full) [s]
 # calculated area [m^2]
@@ -47,7 +47,7 @@ vy = 0.0        # vertical velocity [m/s]
 o_d = 0.0
 ov_d = 0.0
 oa_d = 1.0/(ot_d**2) if ot_d > 0 else -1
-# full openness
+# main openness
 o_f =  0.0
 ov_f = 0.0
 oa_f = 1.0/(ot_f**2) if ot_f > 0 else -1
@@ -60,7 +60,7 @@ while y > 0:
         else:
             o_d = 1.0
 
-    if y < xd_f: # full main openness
+    if y < xd_f: # main openness
         if o_f < 1.0 and oa_f > 0:
             ov_f += sim.integrate(oa_f, 'oa_f')
             o_f += sim.integrate(ov_f, 'ov_f')
