@@ -7,6 +7,7 @@ A two degree-of-freedom parachute descent simulator used to determine approximat
 $\rho = \rho_0 e^{-y/10400}$
 
 $\rho_0$: air density measured at ground level
+
 $y$: the altitude in m
 
 ### Wind Velocity Profile
@@ -14,7 +15,9 @@ $y$: the altitude in m
 $v_w = v_{w10}(y/10)^{\alpha}$
 
 $\alpha$: [Hellmann exponent](https://en.wikipedia.org/wiki/Wind_gradient#Wind_turbines)
+
 $v_{w10}$: wind velocity measured at a standard 10m above ground level
+
 $y$: altitude in m
 
 ### Parachute Opening
@@ -26,10 +29,13 @@ The opening process begins at a specified time or altitude. Parachute 'openness'
 ### Integration
 
 quadratic (default)
+
 $x_t = (\Delta t / 12) (5 \dot{x}_{t} + 8 \dot{x}_{t-1} - \dot{x}_{t-2})$
 
 trapezoidal
+
 $x_t = (\Delta t / 2) (\dot{x}_{t} + \dot{x}_{t-1})$
 
 rectangular
+
 $x_t = (\Delta t) (\dot{x}_{t})$
