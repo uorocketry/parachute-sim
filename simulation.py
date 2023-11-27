@@ -75,7 +75,7 @@ def differentiate(f: float, idf: str) -> float:
 def _an_max(series: PlotData.Series, pd: PlotData):
     for i in range(1, len(series.xs) - 1): # find and annotate local maxima
         if series.ys[i-1] < series.ys[i] and series.ys[i] > series.ys[i+1]:
-            plt.annotate('{} {}'.format(round((series.ys[i]), pd.annotate_max), pd.yunits), (series.xs[i] + 2, series.ys[i]))
+            plt.annotate('{} {}'.format(round((series.ys[i])), pd.yunits), (series.xs[i] + 2, series.ys[i]))
 
 def _plot_series(series: PlotData.Series):
     if series.color != '':
@@ -84,15 +84,21 @@ def _plot_series(series: PlotData.Series):
         plt.plot(series.xs, series.ys, label=series.name, linewidth=0.75)
 
 def _scale_axis(max: float):
-    magnitude = 10**floor(log10(max))
-    dig = max//magnitude
+    magnitude = 10**floor(log10(max)) # max rounded down to nearest power of 10
+    dig = max//magnitude # first digit of max
     err = max%(dig*magnitude)
     if dig > 3 or err/magnitude > 0.5:
         # ex. 7432 -> 8000
-        return magnitude*(dig+1)
+        if err/magnitude < 0.8: # ensure clearance for annotations
+            return magnitude*(dig+1)
+        else:
+            return magnitude*(dig+2)
     else:
         # ex. 2432 -> 2500
-        return magnitude*(dig+0.5)
+        if err/magnitude < 0.4: # ensure clearance for annotations
+            return magnitude*(dig+0.5)
+        else:
+            return magnitude*(dig+1)
 
 def _scale_plots(plot: PlotData):
     x_lims = [0.0, 0.0]
