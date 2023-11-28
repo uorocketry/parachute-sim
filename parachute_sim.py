@@ -23,8 +23,8 @@ vt_d = -40.0    # target velocity [m/s]
 cd_d = 1.0      # drag coefficient
 ot_d = 0.2      # opening time [s] (empirical value from testing)
 # calculated area [m^2]
-# size chute for target velocity at specified altitude rho(alt)
-a_d = (2*g*m)/(rho(1000)*cd_d*vt_d**2)
+a_d = (2*g*m)/(rho(1000)*cd_d*vt_d**2) # size parachute for target velocity at specified altitude rho(alt)
+#a_d = 0.62**2*math.pi/4  # get parachute area based on diameter
 print('drogue diameter: ', round(2*math.sqrt(a_d/math.pi), 2), 'm', sep='')
 
 # Full Main (full) Parameters
@@ -33,8 +33,8 @@ vt_f = -6.0     # target velocity [m/s]
 cd_f = 1.0      # drag coefficient
 ot_f = 0.2      # opening time (reefed to full) [s]
 # calculated area [m^2]
-#a_f = (2*g*m)/(rho(0)*cd_f*vt_f**2)
-a_f = 5.0**2*math.pi/4
+a_f = (2*g*m)/(rho(0)*cd_f*vt_f**2)  # size parachute for target velocity at specified altitude rho(alt)
+#a_f = 5.0**2*math.pi/4 # get parachute area based on diameter
 print('full-main diameter: ', round(2*math.sqrt(a_f/math.pi), 2), 'm', sep='')
 
 # Simulation
@@ -89,10 +89,12 @@ while y > 0:
     y += sim.integrate(vy, 'vy')
 
     # plot
-    sim.plot(y, 'Altitude', 'm')
-    sim.plot(-vy, 'Vertical Velocity', 'm', annotate_max=0)
-    sim.plot(math.hypot(ax, ay), 'Total Acceleration', 'm/s$^2$', annotate_max = 1)
+    sim.plot(y, 'Altitude', 'm', annotate_max=0)
+    sim.plot(-vy, 'Vertical Velocity', 'm/s', annotate_max=0)
+    sim.plot(math.hypot(ax, ay), 'Total Acceleration', 'm/s$^2$', annotate_max = 0)
+    sim.plot(ay, 'Vertical Acceleration', 'm/s$^2$', annotate_max = 0)
     sim.plot(fd, 'Total Drag Force', 'N', annotate_max = 0)
+    sim.plot(math.hypot(vx, vy), 'Total Velocity', 'm/s', annotate_max = 0)
 
     #sim.plot(-vy, 'Velocity', 'm/s', series='y', color='-r')
     #sim.plot(vx, 'Velocity', 'm/s', series='x', color='-g')
@@ -104,7 +106,7 @@ while y > 0:
     #sim.plot(e_potential, 'Energy', 'kJ', series='Potential', color='-g')
     #sim.plot(e_kinetic + e_potential, 'Energy', 'kJ', series='Total', color='-b')
 
-    sim.plotxy('Altitude vs. Horizontal Position ({} m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm')
+    sim.plotxy('Altitude vs. Horizontal Position ({} m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm', annotate_max=0)
 
     sim.step()
 
