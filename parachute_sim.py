@@ -108,9 +108,17 @@ while y > 0:
 
     sim.plotxy('Altitude vs. Horizontal Position ({} m/s Base Wind Velocity)'.format(vw_10), x, y, 'Horizontal Position', 'm', 'Altitude', 'm', annotate_max=0)
 
+    # csv output
+    if int(sim.t*(1/sim.TIMESTEP)) % 10 == 0: # 0.01s sample rate
+        sim.csv_line('out.csv', round(sim.t, 2), x, y, vx, vy, ax, ay, fd)
+
     sim.step()
 
 for y in range(int(y_init)):
     sim.plotxy('Wind Profile ({} m/s Base Wind Velocity)'.format(vw_10), wind_velocity(y), y, 'Wind Velocity', 'm/s', 'Altitude', 'm')
+    sim.csv_line('wind_profile.csv', y, wind_velocity(y))
 
+print('Writing CSVs')
+sim.write_csvs()
+print('Plotting')
 sim.draw_plots()

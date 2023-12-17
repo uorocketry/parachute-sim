@@ -1,11 +1,13 @@
 import matplotlib.pyplot as plt
 from math import log10, floor, sqrt
+import csv
 
 t = 0.0
 TIMESTEP = 0.001
 
 _state_vec = {}
 _plot_vec = {}
+_csv_vec = {}
 
 class PlotData:
     class Series():
@@ -44,6 +46,13 @@ def plotxy(title: str, x: float, y: float, xlabel: str = '', xunits: str = '',
     if title not in _plot_vec:
         _plot_vec[title] = PlotData(title, xlabel, xunits, ylabel, yunits, annotate_max)
     _plot_vec[title].append(x, y, series, color)
+
+def csv_line(file: str, *vars):
+    if file not in _csv_vec:
+        _csv_vec[file] = []
+        _csv_vec[file].append(vars)
+    else:
+        _csv_vec[file].append(vars)
 
 def _update_state(f: float, idf: str) -> list[float]:
     if idf not in _state_vec:
@@ -213,3 +222,12 @@ def draw_plots():
 
     plt.close()
     plt.show()
+
+def write_csvs():
+    for file in _csv_vec.keys():
+        if not file.lower().endswith('.csv'):
+            file += '.csv'
+        with open(file, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            for line in _csv_vec[file]:
+                writer.writerow(line)
