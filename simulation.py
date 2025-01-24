@@ -167,23 +167,29 @@ def _decimate_preserve_maxima(data: PlotData.Series, resolution: float):
     xs = data.xs
     ys = data.ys
 
-    e_x = (max(data.xs)-min(xs))/resolution
-    e_y = (max(ys)-min(ys))/resolution
+    e_x = (max(xs) - min(xs)) / resolution
+    e_y = (max(ys) - min(ys)) / resolution
 
-    xs_out = [xs[0], xs[1]]
-    ys_out = [ys[0], ys[1]]
-    sign_x = xs[0] < xs[1]
-    sign_y = ys[0] < ys[1]
+    xs_out = [xs[0]]
+    ys_out = [ys[0]]
+    # sign_x = xs[0] < xs[1]
+    # sign_y = ys[0] < ys[1]
 
-    for i in range(1, len(xs)-1):
-        dx = xs[i]-xs_out[-1]
-        dy = ys[i]-ys_out[-1]
-        if (abs(dx) > e_x and abs(dy) > e_y or 
-                sign_y != (ys[i] < ys[i+1]) or
-                sign_x != (xs[i] < xs[i+1])):
-            # x and y length greater than threshold or local x/y max/min
-            sign_x = dx > 0
-            sign_y = dy > 0
+    # slope direction change tracking
+    is_increasing = ys[1] > ys[0]
+
+    for i in range(1, len(xs) - 1):
+        dx = xs[i] - xs_out[-1] 
+        dy = ys[i] - ys_out[-1] 
+
+        # local max or min idenification
+        is_local_max = ys[i] > ys[i - 1] and ys[i] > ys[i + 1]
+        is_local_min = ys[i] < ys[i - 1] and ys[i] < ys[i + 1]
+
+        # determination of if the point is being kept: significant dx/dy, local max/min/ or change in slope direction
+        if (abs(dx) > e_x or abs(dy) > e_y or is_local_max or is_local_min or
+                (is_increasing != (ys[i] < ys[i + 1]))):
+            is_increasing = ys[i] < ys[i + 1]  # directional update 
             xs_out.append(xs[i])
             ys_out.append(ys[i])
 
