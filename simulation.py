@@ -120,6 +120,14 @@ def _scale_plots(plot: PlotData):
 
     y_lims[1] = _scale_axis(y_lims[1])
 
+    # expand scale if all data is along one axis
+    if x_lims[0] == x_lims[1]:
+        x_lims[0] -= 1
+        x_lims[1] += 1
+    if y_lims[0] == y_lims[1]:
+        y_lims[0] -= 1
+        y_lims[1] += 1
+
     plt.xlim(x_lims)
     plt.ylim(y_lims)
 
