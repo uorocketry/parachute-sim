@@ -13,13 +13,13 @@ def wind_velocity(alt):    # wind velocity at specified altitude
     return vw_10*(max(alt,0)/10)**vw_alpha
 
 # Rocket Parameters
-m = 11.2        # dry mass [kg]
-y_init = 304.80 # expected apogee [m]
+m = 8.4        # dry mass [kg]
+y_init = 7924.8 # expected apogee [m]
 vx_init = 50.5 # horizontal velocity at apogee [m/s]
 
 # Drogue Parameters
 td_d = 3.0      # deployment delay [s] (0 = deploy at apogee)
-vt_d = -35.0    # target velocity [m/s]
+vt_d = -28.0    # target velocity [m/s]
 cd_d = 1.8      # drag coefficient
 ot_d = 0.0      # opening time [s] (empirical value from testing)
 # calculated area [m^2]
@@ -29,7 +29,7 @@ print('drogue diameter: ', round(2*math.sqrt(a_d/math.pi), 2), 'm', sep='')
 
 # Full Main (full) Parameters
 xd_f = 450.0    # deploy altitude [m]
-vt_f = -7.0     # target velocity [m/s]
+vt_f = -8.0     # target velocity [m/s]
 cd_f = 2.2      # drag coefficient
 ot_f = 0.0      # opening time (reefed to full) [s]
 # calculated area [m^2]
