@@ -14,7 +14,7 @@ def wind_velocity(alt):    # wind velocity at specified altitude
 
 # Rocket Parameters
 m = 8        # dry mass [kg]
-y_init = 7924.8 # expected apogee [m]
+y_init = 9395 # expected apogee [m]
 vx_init = 50.5 # horizontal velocity at apogee [m/s]
 
 # Drogue Parameters
