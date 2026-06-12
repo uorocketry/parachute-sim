@@ -14,28 +14,43 @@ def wind_velocity(alt):    # wind velocity at specified altitude
 
 # Rocket Parameters
 m = 8        # dry mass [kg]
-y_init = 9395 # expected apogee [m]
+y_init = 12192 # expected apogee [m]
 vx_init = 50.5 # horizontal velocity at apogee [m/s]
 
 # Drogue Parameters
-td_d = 3.0      # deployment delay [s] (0 = deploy at apogee)
-vt_d = -25.0    # target velocity [m/s]
+td_d = 0.0      # deployment delay [s] (0 = deploy at apogee)
+vt_d = -27.27    # target velocity [m/s]
 cd_d = 1.4      # drag coefficient
 ot_d = 0.0      # opening time [s] (empirical value from testing)
 # calculated area [m^2]
+
+# ===== OPTION 1: Size parachute from desired descent speed =====
 a_d = (2*g*m)/(rho(1000)*cd_d*vt_d**2) # size parachute for target velocity at specified altitude rho(alt)
-#a_d = 0.62**2*math.pi/4  # get parachute area based on diameter
+#a_d = 0.4**2*math.pi/4  # get parachute area based on diameter
 print('drogue diameter: ', round(2*math.sqrt(a_d/math.pi), 2), 'm', sep='')
+
+# ===== OPTION 2: Calculate descent speed from known diameter =====
+#diam_d = 0.4   # INPUT [m]
+#a_d = math.pi * diam_d**2 / 4
+#vt_d = -math.sqrt((2*g*m)/(rho(0)*cd_d*a_d))
+#print('drogue descent speed:', round(abs(vt_d),2), 'm/s')
 
 # Full Main (full) Parameters
 xd_f = 450.0    # deploy altitude [m]
-vt_f = -7.0     # target velocity [m/s]
+vt_f = -7.25     # target velocity [m/s]
 cd_f = 2.2      # drag coefficient
 ot_f = 0.0      # opening time (reefed to full) [s]
 # calculated area [m^2]
+# ===== OPTION 1: Size parachute from desired descent speed =====
 a_f = (2*g*m)/(rho(0)*cd_f*vt_f**2)  # size parachute for target velocity at specified altitude rho(alt)
-#a_f = 5.0**2*math.pi/4 # get parachute area based on diameter
+#a_f = 1.3**2*math.pi/4 # get parachute area based on diameter
 print('full-main diameter: ', round(2*math.sqrt(a_f/math.pi), 2), 'm', sep='')
+
+#===== OPTION 2: Calculate descent speed from known diameter =====
+#diam_f = 1.20   # INPUT [m]
+#a_f = math.pi * diam_f**2 / 4
+#vt_f = -math.sqrt((2*g*m)/(rho(0)*cd_f*a_f))
+#print('full-main descent speed:', round(abs(vt_f),2), 'm/s')
 
 # Simulation
 x = 0.0         # horizontal position [m]

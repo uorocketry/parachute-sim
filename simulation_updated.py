@@ -223,6 +223,8 @@ def draw_plots():
         if len(plot.data) > 1:
             plt.legend(loc="upper right")
 
+        plt.grid(True)
+
         _scale_plots(plot)
         plt.figure()
 
