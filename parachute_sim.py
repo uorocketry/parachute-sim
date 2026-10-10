@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import simulation as sim
 
 # Environment Paramaters
-rho_init = 1.2  # initial air density [kg/m^3]
+rho_init = 1.15  # initial air density [kg/m^3]
 g = 9.81        # accel due to gravity [m/s^2]
 def rho(alt):   # air density approximation (valid for troposphere)
     return rho_init*math.e**(-alt/10400)
@@ -13,15 +13,15 @@ def wind_velocity(alt):    # wind velocity at specified altitude
     return vw_10*(max(alt,0)/10)**vw_alpha
 
 # Rocket Parameters
-m = 8        # dry mass [kg]
-y_init = 12192 # expected apogee [m]
+m = 7.56        # dry mass [kg]
+y_init = 10650 # expected apogee [m]
 vx_init = 50.5 # horizontal velocity at apogee [m/s]
 
 # Drogue Parameters
-td_d = 0.0      # deployment delay [s] (0 = deploy at apogee)
-vt_d = -27.27    # target velocity [m/s]
-cd_d = 1.4      # drag coefficient
-ot_d = 0.0      # opening time [s] (empirical value from testing)
+td_d = 3.0      # deployment delay [s] (0 = deploy at apogee)
+vt_d = -34.15    # target velocity [m/s]
+cd_d = 0.88      # drag coefficient
+ot_d = 0      # opening time [s] (empirical value from testing)
 # calculated area [m^2]
 
 # ===== OPTION 1: Size parachute from desired descent speed =====
@@ -30,16 +30,16 @@ a_d = (2*g*m)/(rho(1000)*cd_d*vt_d**2) # size parachute for target velocity at s
 print('drogue diameter: ', round(2*math.sqrt(a_d/math.pi), 2), 'm', sep='')
 
 # ===== OPTION 2: Calculate descent speed from known diameter =====
-#diam_d = 0.4   # INPUT [m]
+#diam_d = 0.40   # INPUT [m]
 #a_d = math.pi * diam_d**2 / 4
 #vt_d = -math.sqrt((2*g*m)/(rho(0)*cd_d*a_d))
 #print('drogue descent speed:', round(abs(vt_d),2), 'm/s')
 
 # Full Main (full) Parameters
 xd_f = 450.0    # deploy altitude [m]
-vt_f = -7.25     # target velocity [m/s]
-cd_f = 2.2      # drag coefficient
-ot_f = 0.0      # opening time (reefed to full) [s]
+vt_f = -8.01    # target velocity [m/s]
+cd_f = 1.88      # drag coefficient
+ot_f = 0.2      # opening time (reefed to full) [s]
 # calculated area [m^2]
 # ===== OPTION 1: Size parachute from desired descent speed =====
 a_f = (2*g*m)/(rho(0)*cd_f*vt_f**2)  # size parachute for target velocity at specified altitude rho(alt)
