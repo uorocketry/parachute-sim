@@ -13,15 +13,15 @@ def wind_velocity(alt):    # wind velocity at specified altitude
     return vw_10*(max(alt,0)/10)**vw_alpha
 
 # Rocket Parameters
-m = 7.56        # dry mass [kg]
-y_init = 10650 # expected apogee [m]
+m = 22        # dry mass [kg]
+y_init = 6681 # expected apogee [m]
 vx_init = 50.5 # horizontal velocity at apogee [m/s]
 
 # Drogue Parameters
-td_d = 3.0      # deployment delay [s] (0 = deploy at apogee)
-vt_d = -34.15    # target velocity [m/s]
-cd_d = 0.88      # drag coefficient
-ot_d = 0      # opening time [s] (empirical value from testing)
+td_d = 0.0      # deployment delay [s] (0 = deploy at apogee)
+vt_d = -30    # target velocity [m/s]
+cd_d = 1.8      # drag coefficient
+ot_d = 0.0      # opening time [s] (empirical value from testing)
 # calculated area [m^2]
 
 # ===== OPTION 1: Size parachute from desired descent speed =====
@@ -37,9 +37,10 @@ print('drogue diameter: ', round(2*math.sqrt(a_d/math.pi), 2), 'm', sep='')
 
 # Full Main (full) Parameters
 xd_f = 450.0    # deploy altitude [m]
-vt_f = -8.01    # target velocity [m/s]
-cd_f = 1.88      # drag coefficient
-ot_f = 0.2      # opening time (reefed to full) [s]
+vt_f = -7    # target velocity [m/s]
+cd_f = 1.4      # drag coefficient
+ot_f = 0.0      # opening time (reefed to full) [s]
+
 # calculated area [m^2]
 # ===== OPTION 1: Size parachute from desired descent speed =====
 a_f = (2*g*m)/(rho(0)*cd_f*vt_f**2)  # size parachute for target velocity at specified altitude rho(alt)
