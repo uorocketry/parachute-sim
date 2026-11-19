@@ -28,7 +28,7 @@ vx_init         = 50.5;   % <<< EDIT  horizontal velocity at apogee (m/s)
 v_target_reefed = 20;     % <<< EDIT  reefed descent speed target (m/s)
 v_target_open   = 7;      % <<< EDIT  fully open descent speed target (m/s, at landing)
 Cd_reefed       = 1.4;    % <<< EDIT  PLACEHOLDER (not sourced): replace with measured value
-Cd_open         = 2.2;    % <<< EDIT  Fruity Chutes specs for a comparable parachute + other research
+Cd_open         = 1.8;    % <<< EDIT  Fruity Chutes specs for a comparable parachute + other research
 reef_speed_ref_agl = open_deploy_agl;   % <<< EDIT (optional) altitude where v_target_reefed applies
                                         %     = open_deploy_agl (speed at reefing cut) or apogee_agl
 
